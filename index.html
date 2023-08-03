@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <title>RNA en TF</title>
+  <style>
+    .centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .footer {
+      background-color: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    section {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <section class="section centered">
+    <div class="container">
+      <h1 class="title">Metros a Pulgadas</h1>
+      <p class="subtitle">Conversi&oacute;n de Metros a Pulgadas utilizando Tensorflow y Tensorflow.js</p>
+      <div class="columns">
+        <div class="column">
+          <div class="box">
+            <p class="title is-4">Conversor</p>
+            <p>Ingresa unidades de medida en metros para convertirlos en pulgadas.</p>
+            <br>
+            <div class="field has-addons">
+                <div class="control">
+                  <input class="input" type="text" id="metros" placeholder="Ingresa metros">
+                </div>
+                <div class="control">
+                  <button class="button is-primary" id="metros" onclick="ejecutarModelo();">Calcular</button>
+                </div>
+              </div>
+            <br>
+            <div class="has-text-weight-bold" id="resultado">
+              Resultado
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="content">
+      <b>ITSM - ISC - Ciencia de Datos</b>
+      <p>Adrian Basilio López</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+
+    <script type="text/javascript">
+
+      var modelo = null;
+
+      //Cargar modelo
+      (async () => {
+          console.log("Cargando modelo...");
+          modelo = await tf.loadLayersModel("./model/model.json");
+          console.log("Modelo cargado...");
+      })();
+
+      function ejecutarModelo() {
+        var metros = document.getElementById("metros").value;
+        if (modelo != null) {
+          var tensor = tf.tensor1d([parseFloat(metros)]);
+          var prediccion = modelo.predict(tensor).dataSync();
+          prediccion = Math.round(prediccion, 1);
+          document.getElementById("resultado").innerHTML = "El resultado es: "+prediccion+" pulgadas";
+        } else {
+          document.getElementById("resultado").innerHTML = "Intenta de nuevo en un momento...";
+        }
+      }
+    </script>
+</body>
+</html>
